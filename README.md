@@ -32,7 +32,25 @@ PYTHONPATH=. python -c "from namecheap import NamecheapClient, load_client_from_
 
 ## Сайт и DNS (nodeadline.online)
 
-- **Статика:** каталог `public/` — корень `https://nodeadline.online/` (после TLS).
+### Почему «не открывается» с браузера
+
+Пока у домена в DNS **A** стоит **не IP вашего VPS** (часто **парковка Namecheap** `162.255.*` или редирект `namecheap-nginx`), запросы **не попадают** на этот сервер — nginx тут ни при чём. Проверка:
+
+```bash
+dig +short nodeadline.online A
+# должно быть 147.45.169.78 (или ваш актуальный IP сервера)
+```
+
+Исправление: панель Namecheap → **Advanced DNS** (или `scripts/provision_nodeadline.py` с API) → **@** и **www** → **A** на IP сервера. После этого HTTP снаружи дойдёт до nginx; затем **certbot** для HTTPS.
+
+### Статика и «версии»
+
+Один вход на порту **80/443** даёт **nginx**: он по **пути URL** отдаёт разные каталоги (`/`, `/ai_metadata/`, позже можно `/v1/`, `/v2/`). Несколько процессов Python на **одном** порту без прокси не слушают — либо разные порты + nginx `proxy_pass`, либо один приложение с роутингом.
+
+- **Статика:** каталог `public/` — корень сайта; стартовая страница гостя: **`default_user.html`** (директива `index`).
+- **Черновик UI:** `/ai_metadata/ai.test.html`
+- **Заготовка после логина:** `/nodeadline.html` (позже привязка к Google sub).
+
 - **Nginx на сервере:** `deploy/nginx-nodeadline.online.conf` (копия лежит в `/etc/nginx/sites-available/nodeadline.online`).
 - **Продакшен Namecheap:** `sandbox: false`, `client_ip` = публичный IPv4 сервера (тот же в whitelist Namecheap). Логин API: `api_user` в JSON или `export NAMECHEAP_API_USER=...`.
 
