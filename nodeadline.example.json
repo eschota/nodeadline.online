@@ -6,5 +6,12 @@
   "github": {
     "token": "GITHUB_PAT_ВСТАВЬТЕ_СЮДА",
     "apiBase": "https://api.github.com"
+  },
+  "namecheap": {
+    "api_user": "NAMECHEAP_LOGIN",
+    "username": "NAMECHEAP_LOGIN",
+    "api_key": "NAMECHEAP_API_KEY",
+    "client_ip": "ВАШ_IPV4_ИЗ_WHITELIST",
+    "sandbox": true
   }
 }
