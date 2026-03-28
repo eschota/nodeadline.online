@@ -142,15 +142,58 @@ class DNSRecord:
     friendly_name: str = ""
 
 
+def merge_namecheap_env(nc: Mapping[str, Any]) -> dict[str, Any]:
+    """Overlay secrets / overrides from environment (optional)."""
+    out: dict[str, Any] = dict(nc)
+    if os.environ.get("NAMECHEAP_API_USER", "").strip():
+        out["api_user"] = os.environ["NAMECHEAP_API_USER"].strip()
+    if os.environ.get("NAMECHEAP_USERNAME", "").strip():
+        out["username"] = os.environ["NAMECHEAP_USERNAME"].strip()
+    if os.environ.get("NAMECHEAP_CLIENT_IP", "").strip():
+        out["client_ip"] = os.environ["NAMECHEAP_CLIENT_IP"].strip()
+    if os.environ.get("NAMECHEAP_API_KEY", "").strip():
+        out["api_key"] = os.environ["NAMECHEAP_API_KEY"].strip()
+    sb = os.environ.get("NAMECHEAP_SANDBOX", "").strip().lower()
+    if sb in ("0", "false", "no"):
+        out["sandbox"] = False
+    if sb in ("1", "true", "yes"):
+        out["sandbox"] = True
+    if os.environ.get("NAMECHEAP_PRODUCTION", "").strip().lower() in ("1", "true", "yes"):
+        out["sandbox"] = False
+    return out
+
+
+def whois_contact_from_dict(d: Mapping[str, Any]) -> WhoisContact:
+    """Build WhoisContact from JSON (snake_case keys)."""
+    return WhoisContact(
+        first_name=str(d["first_name"]).strip(),
+        last_name=str(d["last_name"]).strip(),
+        address1=str(d["address1"]).strip(),
+        city=str(d["city"]).strip(),
+        state_province=str(d["state_province"]).strip(),
+        postal_code=str(d["postal_code"]).strip(),
+        country=str(d["country"]).strip(),
+        phone=str(d["phone"]).strip(),
+        email=str(d["email"]).strip(),
+        organization=str(d.get("organization", "") or "").strip(),
+        address2=str(d.get("address2", "") or "").strip(),
+        job_title=str(d.get("job_title", "") or "").strip(),
+        phone_ext=str(d.get("phone_ext", "") or "").strip(),
+        fax=str(d.get("fax", "") or "").strip(),
+        state_province_choice=str(d.get("state_province_choice", "") or "").strip(),
+    )
+
+
 def load_client_from_json(path: str | None = None) -> NamecheapClient:
     cfg_path = path or os.environ.get("NODEADLINE_CONFIG", "nodeadline.json")
     with open(cfg_path, encoding="utf-8") as f:
         data = json.load(f)
-    nc = data.get("namecheap") or {}
+    nc = merge_namecheap_env(data.get("namecheap") or {})
     missing = [k for k in ("api_user", "api_key", "client_ip") if not str(nc.get(k, "")).strip()]
     if missing:
         raise ValueError(
-            f"In {cfg_path} fill namecheap fields: {', '.join(missing)} (see nodeadline.example.json)"
+            f"In {cfg_path} (or env NAMECHEAP_*) fill namecheap fields: {', '.join(missing)} "
+            f"(see nodeadline.example.json). Tip: export NAMECHEAP_API_USER=your_login"
         )
     api_user = str(nc["api_user"]).strip()
     return NamecheapClient(

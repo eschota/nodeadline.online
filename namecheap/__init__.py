@@ -6,7 +6,9 @@ from .name_cheap_api import (
     NamecheapError,
     WhoisContact,
     load_client_from_json,
+    merge_namecheap_env,
     split_sld_tld,
+    whois_contact_from_dict,
 )
 
 __all__ = [
@@ -15,5 +17,7 @@ __all__ = [
     "NamecheapError",
     "WhoisContact",
     "load_client_from_json",
+    "merge_namecheap_env",
     "split_sld_tld",
+    "whois_contact_from_dict",
 ]

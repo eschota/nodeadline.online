@@ -29,3 +29,26 @@ PYTHONPATH=. python -c "from namecheap import NamecheapClient, load_client_from_
 ```
 
 Для **продакшена** в `nodeadline.json` поставьте `"sandbox": false`.
+
+## Сайт и DNS (nodeadline.online)
+
+- **Статика:** каталог `public/` — корень `https://nodeadline.online/` (после TLS).
+- **Nginx на сервере:** `deploy/nginx-nodeadline.online.conf` (копия лежит в `/etc/nginx/sites-available/nodeadline.online`).
+- **Продакшен Namecheap:** `sandbox: false`, `client_ip` = публичный IPv4 сервера (тот же в whitelist Namecheap). Логин API: `api_user` в JSON или `export NAMECHEAP_API_USER=...`.
+
+**Уже купленный домен** (как сейчас): скрипт только выставляет **A** для `@` и `www` на `server_ipv4`.
+
+```bash
+cd /root/nodeadline.online
+export NAMECHEAP_API_USER=ваш_логин_namecheap   # если не заполнено в nodeadline.json
+python3 scripts/provision_nodeadline.py
+```
+
+**Если домен ещё свободен** — заполните `namecheap.registrant` в `nodeadline.json` (реальные контакты WHOIS), тогда скрипт вызовет `domains.create`.
+
+**HTTPS после того, как `dig nodeadline.online A` вернёт IP сервера:**
+
+```bash
+export CERTBOT_EMAIL=ваш@email
+./scripts/enable_tls_nodeadline.sh
+```
