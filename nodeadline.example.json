@@ -1,0 +1,10 @@
+{
+  "project": {
+    "name": "nodeadline.online",
+    "description": "Шаблон настроек — скопируйте в nodeadline.json и подставьте токен"
+  },
+  "github": {
+    "token": "GITHUB_PAT_ВСТАВЬТЕ_СЮДА",
+    "apiBase": "https://api.github.com"
+  }
+}

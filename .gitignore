@@ -1,3 +1,6 @@
 node_modules/
 .env
 .DS_Store
+
+# Секреты проекта (токены); в репозиторий только nodeadline.example.json
+nodeadline.json
