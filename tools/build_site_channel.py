@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import json
 import shutil
-import subprocess
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -41,7 +41,7 @@ def main() -> None:
         )
         sys.exit(1)
     OUT.mkdir(parents=True, exist_ok=True)
-    stamp = subprocess.check_output(["date", "-u", "+%Y%m%dT%H%M%SZ"], text=True).strip()
+    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     tgz_name = f"nodeadline-site-{stamp}.tar.gz"
     arc_base = OUT / f"nodeadline-site-{stamp}"
     shutil.make_archive(str(arc_base), "gztar", root_dir=str(SRC))

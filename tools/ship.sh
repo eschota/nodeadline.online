@@ -32,6 +32,8 @@ done
 
 echo "==> NODEADLINE_LOCAL_DEST=$NODEADLINE_LOCAL_DEST"
 "$ROOT/tools/deploy_public.sh" --release "${EXTRA[@]}"
-"$ROOT/tools/verify_public_deploy.sh"
+VERIFY_DIR="${NODEADLINE_VERIFY_PUBLIC_DIR:-${NODEADLINE_LOCAL_DEST:-/var/www/nodeadline/public}}"
+VERIFY_BASE="${NODEADLINE_VERIFY_BASE:-https://nodeadline.online}"
+"$ROOT/tools/verify_public_deploy.sh" "$VERIFY_DIR" "$VERIFY_BASE"
 echo ""
 echo "OK: nodeadline.online отдаёт свежий public/. Ноды: Python payload по core-manifest; дашборд /site/ по site_channel.json (bundle_sha256)."

@@ -1,4 +1,4 @@
-798e13ab52d6855f12e9c41088fa2130b40ff4a9b4a81e1ded241a2fcd5ad813 *builds/0017/nodeadline-installer-windows-amd64-v2.0.9.exe
-06c70943cba7baaeb2fb6a2a87dc2e3785777ec08b2cf4bde2a9eceb2db8c42a *builds/0017/nodeadline-installer-linux-amd64-v2.0.9
-2a8c14384eb2803c862b8ef83f3c944332f4d5d33d224b5ebac6a175cbb98e1c *builds/0017/nodeadline-installer-darwin-arm64-v2.0.9
-414f44b4a19b9b400df98df2954e4f27397b259833a43403577cdb134fb0d83b *core-node-payload.tar.gz
+e1f1761fb81f685c8aa4a087b11e36fb4bdaf224d6137c5423fe136ff6793b55 *builds/0018/nodeadline-installer-windows-amd64-v2.0.10.exe
+003fa2f5f043b63fe845ae00594da1ddc2e583c326ea00a3904948c1237a33e8 *builds/0018/nodeadline-installer-linux-amd64-v2.0.10
+c84d1da24c7944a63f40ddcb6503ccd9d427394d2d2e1e1d915f913f45e9716b *builds/0018/nodeadline-installer-darwin-arm64-v2.0.10
+55dfb337d52ce22a5afea02d76f7e6a95441c970d319ea2ed3330e6659961b0e *core-node-payload.tar.gz

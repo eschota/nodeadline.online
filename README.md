@@ -48,14 +48,28 @@ After a successful node start, the installer creates a **Start Menu** shortcut: 
 
 ## Deploy
 
-### Одна кнопка с Windows (`deploy.bat`)
+### Локально (eschota / эта машина, без SSH)
 
-1. Скопируйте [`deploy.env.example`](deploy.env.example) → **`deploy.env`** (файл в `.gitignore`), укажите `DEPLOY_SSH`, `DEPLOY_REMOTE_DIR`, `NODEADLINE_LOCAL_DEST`. Опционально **`DEPLOY_SSH_IDENTITY`** — путь к приватному ключу (например `%USERPROFILE%\.ssh\id_ed25519`); если не задан и есть `%USERPROFILE%\.ssh\id_ed25519`, он подставится сам.
+Если мастер и nginx уже подняты у вас (например **eschota.nodeadline.online**), достаточно пересобрать и залить `public/` **здесь** — остальные ноды подтянут payload с master по обычному каналу. SSH на «главный» VPS для этого не нужен.
+
+1. Скопируйте [`deploy_local.env.example`](deploy_local.env.example) → **`deploy_local.env`** (в `.gitignore`), задайте **`NODEADLINE_LOCAL_DEST`** — Windows-путь к каталогу, который отдаёт nginx как docroot для этого хоста. При необходимости **`NODEADLINE_VERIFY_BASE`** (по умолчанию `https://eschota.nodeadline.online`).
+2. Из корня репозитория: **`deploy_local.bat`** — локально выполняется [`tools/ship.sh`](tools/ship.sh) (release + rsync в ваш каталог + проверка по HTTPS).
+3. Patch в `public/version.json`: **`deploy_local.bat --bump-version`**.
+
+### Одна кнопка на удалённый VPS по SSH (`deploy.bat`)
+
+Когда репозиторий и nginx живут **на другом сервере**, а вы выкладываете с этой Windows-машины через `git push` + SSH:
+
+1. Скопируйте [`deploy.env.example`](deploy.env.example) → **`deploy.env`**, укажите `DEPLOY_SSH`, `DEPLOY_REMOTE_DIR`, `NODEADLINE_LOCAL_DEST`. Опционально **`DEPLOY_SSH_IDENTITY`** — путь к приватному ключу (например `%USERPROFILE%\.ssh\id_ed25519`); если не задан и есть `%USERPROFILE%\.ssh\id_ed25519`, он подставится сам.
 2. Нужен **SSH-ключ** к VPS и закоммиченные изменения в git (перед выкладкой выполняется `git push`).
-3. Запуск из корня репозитория: **`deploy.bat`** — на сервере: `git pull` → [`tools/ship.sh`](tools/ship.sh) (payload + `/site/` + rsync в nginx) → [`tools/restart_master.sh`](tools/restart_master.sh).
+3. Запуск: **`deploy.bat`** — на сервере: `git pull` → [`tools/ship.sh`](tools/ship.sh) → [`tools/restart_master.sh`](tools/restart_master.sh).
 4. С поднятием patch-версии в `version.json`: **`deploy.bat --bump-version`**.
 
-Без `deploy.env` скрипт подскажет создать его из примера.
+**Установщики и `public/downloads/builds/`** в `.gitignore`: после сборки на Windows ([`tools/build_installers.ps1`](tools/build_installers.ps1) + `tools/publish_installer_build.sh` + `tools/release_payload.sh` в Git Bash) залейте каталог `public/` на VPS: **`powershell -NoProfile -File tools/sync_public_scp.ps1`**, затем на сервере без повторного `release_payload`:  
+`cd ~/nodeadline.online && export NODEADLINE_LOCAL_DEST=/var/www/nodeadline/public && ./tools/deploy_public.sh`  
+и перезапуск мастера. Так `build_site_channel.py` (нужен `libtorrent` на сервере) обновит `/site/`, rsync положит файлы в nginx.
+
+Без нужного `deploy.env` / `deploy_local.env` скрипт подскажет создать его из примера.
 
 Серверный пайплайн вручную: `deploy/deploy-nodeadline.sh`, `deploy/nginx-nodeadline.online.conf`.
 

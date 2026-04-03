@@ -3,18 +3,22 @@
 package main
 
 import (
+	_ "embed"
 	"io"
 	"log"
 	"os"
 	"os/exec"
 
 	"fyne.io/systray"
-	icon "fyne.io/systray/example/icon"
 )
+
+//go:embed assets/tray.ico
+var trayIcon []byte
 
 func runWindowsTray(_ io.Writer, _ chan struct{}, triggerShutdown func(), installerDone <-chan struct{}) {
 	onReady := func() {
-		systray.SetTemplateIcon(icon.Data, icon.Data)
+		// Windows expects .ico bytes; SetIcon is correct for the notification area (not macOS template).
+		systray.SetIcon(trayIcon)
 		systray.SetTooltip("Nodeadline — локальная нода")
 		systray.SetTitle("Nodeadline")
 

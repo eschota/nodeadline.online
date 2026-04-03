@@ -4,6 +4,10 @@
 # Filenames include semver from version.json, e.g. nodeadline-installer-windows-amd64-v2.0.6.exe.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+ROOT_PY="$ROOT"
+if command -v cygpath >/dev/null 2>&1; then
+	ROOT_PY="$(cygpath -w "$ROOT" 2>/dev/null | sed 's|\\|/|g' || echo "$ROOT")"
+fi
 DL="$ROOT/public/downloads"
 BF="$DL/installer_build.txt"
 LAST=$(cat "$BF" 2>/dev/null || echo 0)
@@ -13,10 +17,10 @@ PAD=$(printf '%04d' "$NEXT")
 DEST="$DL/builds/$PAD"
 mkdir -p "$DEST"
 
-readarray -t NAMES < <(python3 << PY
+readarray -t NAMES < <(python3 << PY | tr -d '\r'
 import json
 from pathlib import Path
-root = Path("$ROOT")
+root = Path("$ROOT_PY")
 v = json.loads((root / "public/version.json").read_text(encoding="utf-8"))["version"]
 ver = v.split("-")[0].strip().replace("/", "-")
 print(f"nodeadline-installer-windows-amd64-v{ver}.exe")
@@ -30,7 +34,7 @@ DAR="${NAMES[2]}"
 
 for f in "$WIN" "$LIN" "$DAR"; do
   if [[ ! -f "$DL/$f" ]]; then
-    echo "ERROR: missing $DL/$f — run tools/build_installers.sh first" >&2
+    echo "ERROR: missing $DL/$f - run tools/build_installers.sh first" >&2
     exit 1
   fi
   cp -a "$DL/$f" "$DEST/$f"

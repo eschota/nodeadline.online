@@ -1,9 +1,9 @@
 {
-  "version": "2.0.9",
-  "installer_build": "0017",
-  "deploy_seq": 23,
-  "deployed_at_utc": "2026-04-03T09:46:47Z",
-  "payload_sha256": "414f44b4a19b9b400df98df2954e4f27397b259833a43403577cdb134fb0d83b",
-  "payload_size": 88187,
-  "built_at_utc": "2026-04-03T09:46:48Z"
+  "version": "2.0.10",
+  "installer_build": "0018",
+  "deploy_seq": 25,
+  "deployed_at_utc": "2026-04-03T10:15:00Z",
+  "payload_sha256": "55dfb337d52ce22a5afea02d76f7e6a95441c970d319ea2ed3330e6659961b0e",
+  "payload_size": 88202,
+  "built_at_utc": "2026-04-03T10:15:01Z"
 }

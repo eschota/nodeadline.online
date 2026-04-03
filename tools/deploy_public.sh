@@ -106,7 +106,13 @@ DEST="${NODEADLINE_RSYNC_DEST:-}"
 
 if [[ -n "$LOCAL" ]]; then
   echo "rsync public/ -> $LOCAL (локально)"
-  sudo rsync -a --delete --info=stats2 "$ROOT/public/" "$LOCAL/"
+  _uname_s="$(uname -s 2>/dev/null || true)"
+  if [[ "${NODEADLINE_RSYNC_NO_SUDO:-0}" == "1" ]] || [[ "$_uname_s" == MINGW* ]] || [[ "$_uname_s" == MSYS* ]]; then
+    rsync -a --delete --info=stats2 "$ROOT/public/" "$LOCAL/"
+  else
+    sudo rsync -a --delete --info=stats2 "$ROOT/public/" "$LOCAL/"
+  fi
+  unset _uname_s
 elif [[ -n "$DEST" ]]; then
   echo "rsync public/ -> $DEST"
   rsync -a --delete --info=stats2 "$ROOT/public/" "$DEST"

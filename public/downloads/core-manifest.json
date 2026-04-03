@@ -1,11 +1,11 @@
 {
-  "version": "2.0.9",
+  "version": "2.0.10",
   "artifacts": [
     {
       "path": "staging/core-node-payload.tar.gz",
       "url": "https://nodeadline.online/downloads/core-node-payload.tar.gz",
-      "sha256": "414f44b4a19b9b400df98df2954e4f27397b259833a43403577cdb134fb0d83b",
-      "size": 88187
+      "sha256": "55dfb337d52ce22a5afea02d76f7e6a95441c970d319ea2ed3330e6659961b0e",
+      "size": 88202
     }
   ]
 }

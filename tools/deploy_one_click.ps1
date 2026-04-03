@@ -2,6 +2,8 @@
 <#
   One-click: optional git push + SSH to VPS: git pull + tools/ship.sh + tools/restart_master.sh.
 
+  Если master/nginx на этой машине (eschota и т.д.) — без SSH: tools\deploy_local.ps1 / deploy_local.bat.
+
   Usage (repo root):
     .\deploy.bat
     .\deploy.bat --bump-version
