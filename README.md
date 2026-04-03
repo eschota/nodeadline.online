@@ -41,6 +41,7 @@ Runtime: `-silent` hides the console and shows the tray (left click = open dashb
 
 ## Docs
 
+- [docs/PROJECT.md](docs/PROJECT.md) — устройство проекта, компоненты, каналы обновлений, ссылки на остальную документацию
 - [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md)
 
 ## Deploy
