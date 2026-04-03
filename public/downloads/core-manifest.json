@@ -4,8 +4,8 @@
     {
       "path": "staging/core-node-payload.tar.gz",
       "url": "https://nodeadline.online/downloads/core-node-payload.tar.gz",
-      "sha256": "b36db94e48dad1361960d06db1d15b2f04c14b4da0942a11285b262964b82b8d",
-      "size": 86411
+      "sha256": "414f44b4a19b9b400df98df2954e4f27397b259833a43403577cdb134fb0d83b",
+      "size": 88187
     }
   ]
 }

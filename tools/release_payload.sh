@@ -9,12 +9,16 @@
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
+ROOT_PY="$ROOT"
+if command -v cygpath >/dev/null 2>&1; then
+	ROOT_PY="$(cygpath -w "$ROOT" 2>/dev/null | sed 's|\\|/|g' || echo "$ROOT")"
+fi
 
 if [[ "${1:-}" == "--bump-version" ]]; then
-  python3 << 'PY'
+  python3 << PY
 import json
 from pathlib import Path
-p = Path("public/version.json")
+p = Path("$ROOT_PY") / "public" / "version.json"
 d = json.loads(p.read_text(encoding="utf-8"))
 ver = str(d.get("version", "2.0.0")).strip()
 base = ver.split("-")[0].strip()
@@ -32,12 +36,12 @@ PY
 fi
 
 # Каждый релиз: +1 к deploy_seq и метка времени (видно в version.json / build.json после деплоя).
-python3 << 'PY'
+python3 << PY
 import json
 from datetime import datetime, timezone
 from pathlib import Path
 
-p = Path("public/version.json")
+p = Path("$ROOT_PY") / "public" / "version.json"
 d = json.loads(p.read_text(encoding="utf-8"))
 n = int(d.get("deploy_seq") or 0) + 1
 d["deploy_seq"] = n
@@ -48,15 +52,15 @@ PY
 
 "$ROOT/tools/build_payload.sh"
 
-readarray -t ART < <(python3 << PY
+readarray -t ART < <(python3 << PY | tr -d '\r'
 import json
 import os
 from pathlib import Path
 from urllib.parse import urlparse
 
-root = Path("$ROOT")
+root = Path("$ROOT_PY")
 d = json.loads((root / "public/version.json").read_text(encoding="utf-8"))
-pad = str(d.get("installer_build") or "").strip()
+pad = str(d.get("installer_build") or "").strip().replace("\r", "")
 if not pad:
     raise SystemExit("ERROR: installer_build missing in public/version.json")
 

@@ -5,3 +5,5 @@ package main
 func freeConsoleIfNeeded() {}
 
 func openLocalURL(url string) {}
+
+func openInstallerLog() {}

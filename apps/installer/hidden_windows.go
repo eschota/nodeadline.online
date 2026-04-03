@@ -3,6 +3,7 @@
 package main
 
 import (
+	"os"
 	"os/exec"
 	"syscall"
 )
@@ -19,4 +20,15 @@ func openLocalURL(url string) {
 		return
 	}
 	_ = exec.Command("cmd", "/c", "start", "", url).Start()
+}
+
+func openInstallerLog() {
+	p := installerLogPath()
+	if p == "" {
+		return
+	}
+	if _, err := os.Stat(p); os.IsNotExist(err) {
+		_ = os.WriteFile(p, []byte{}, 0644)
+	}
+	_ = exec.Command("notepad.exe", p).Start()
 }

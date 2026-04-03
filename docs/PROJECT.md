@@ -50,6 +50,8 @@ flowchart TB
 
 Конфиги: примеры [`master.example.json`](../master.example.json), [`nodeadline.example.json`](../nodeadline.example.json); реальные секреты не в git.
 
+**Установщик на Windows:** по умолчанию данные — `%LOCALAPPDATA%\nodeadline-v2\` (см. [`apps/installer/main.go`](../apps/installer/main.go)). Запуск **без консоли и с иконкой в трее** включён по умолчанию; для отладки с окном консоли: флаг `-console` или `NODEADLINE_CONSOLE=1`. После успешного старта ноды создаётся ярлык в меню «Пуск»: `Programs\Nodeadline\Nodeadline.lnk` (аргумент `-silent` в ярлыке для явности). Отключить ярлык: `NODEADLINE_NO_STARTMENU=1`.
+
 ---
 
 ## 3. Как устроены обновления (важно различать)

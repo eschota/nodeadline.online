@@ -2,6 +2,11 @@
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
+# Git Bash: Windows Python cannot open /r/... — use drive path for Python only.
+ROOT_PY="$ROOT"
+if command -v cygpath >/dev/null 2>&1; then
+	ROOT_PY="$(cygpath -w "$ROOT" 2>/dev/null | sed 's|\\|/|g' || echo "$ROOT")"
+fi
 STAGING="$ROOT/public/downloads"
 mkdir -p "$STAGING"
 TMP=$(mktemp -d)
@@ -13,8 +18,8 @@ cp node_main.py requirements-node.txt nodeadline.example.json "$TMP/"
 echo "waitress" > "$TMP/venv_import_probe.txt"
 echo "cryptography" >> "$TMP/venv_import_probe.txt"
 echo "jwt" >> "$TMP/venv_import_probe.txt"
-VER=$(python3 -c "import json;print(json.load(open('$ROOT/public/version.json')).get('version','2.0.0'))")
-IB=$(python3 -c "import json;print(json.load(open('$ROOT/public/version.json')).get('installer_build','') or '')")
+VER=$(python3 -c "import json;print(json.load(open('$ROOT_PY/public/version.json')).get('version','2.0.0'))")
+IB=$(python3 -c "import json;print(json.load(open('$ROOT_PY/public/version.json')).get('installer_build','') or '')")
 echo "$VER" > "$TMP/release_version.txt"
 echo "$VER" > "$ROOT/release_version.txt"
 (
@@ -42,7 +47,7 @@ python3 << PY
 import json
 from pathlib import Path
 
-root = Path("$ROOT")
+root = Path("$ROOT_PY")
 vj = json.loads((root / "public" / "version.json").read_text(encoding="utf-8"))
 p = root / "public" / "build.json"
 p.write_text(

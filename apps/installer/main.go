@@ -162,7 +162,8 @@ func main() {
 	logInfof("nodeadline installer start os=%s/%s installDir=%s log=%s",
 		runtime.GOOS, runtime.GOARCH, installDir, logPath)
 
-	useTray := runtime.GOOS == "windows" && silent && !noTray
+	// Windows: tray whenever not disabled (-no-tray), even with -console (debug).
+	useTray := runtime.GOOS == "windows" && !noTray
 
 	shutdown := make(chan struct{})
 	var shutdownOnce sync.Once

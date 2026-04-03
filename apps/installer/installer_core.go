@@ -70,6 +70,16 @@ func runInstallerCore(shutdown <-chan struct{}, mw io.Writer) error {
 	runner.setCmd(cmd)
 	logOKf("node pid=%d port=%d", cmd.Process.Pid, port)
 
+	if envOr("NODEADLINE_NO_STARTMENU", "") == "" {
+		if exe, err := os.Executable(); err == nil {
+			if err := ensureStartMenuShortcut(exe); err != nil {
+				log.Printf("start menu shortcut: %v", err)
+			}
+		} else {
+			log.Printf("start menu shortcut: executable: %v", err)
+		}
+	}
+
 	waitHealthy(port)
 
 	go updateLoop(base, installDir, appDir, venvPy, runner, port, nodeMain, mw, runtimeDir, httpClient)

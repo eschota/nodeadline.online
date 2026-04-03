@@ -27,9 +27,11 @@ python3 apps/node/main.py
 cd apps/installer && go build -o nodeadline-installer .
 ```
 
-Windows `.exe` with **system tray** (`-silent`): cross-compile needs **CGO** and **MinGW** (`x86_64-w64-mingw32-gcc`). Use `tools/build_installers.sh` (sets `CC` automatically) or:  
+Windows `.exe`: **on Windows the installer defaults to hidden console + system tray** (no need for `-silent`). Cross-compile needs **CGO** and **MinGW** (`x86_64-w64-mingw32-gcc`). Use `tools/build_installers.sh` (sets `CC` automatically) or:  
 `GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc go build -o nodeadline-installer.exe .`  
-Runtime: `-silent` hides the console and shows the tray (left click = open dashboard, right = menu). `-no-tray` keeps console behavior without tray.
+Runtime: tray = left click opens dashboard, right = menu. **`-console`** / **`NODEADLINE_CONSOLE=1`** — show console (debug). **`-no-tray`** / **`NODEADLINE_NO_TRAY=1`** — no tray. **`-silent`** still forces quiet mode on any OS.
+
+After a successful node start, the installer creates a **Start Menu** shortcut: `%APPDATA%\Microsoft\Windows\Start Menu\Programs\Nodeadline\Nodeadline.lnk` → current `.exe` with `-silent` (explicit; default on Windows is already silent). Set `NODEADLINE_NO_STARTMENU=1` to skip creating it.
 
 ## Config
 

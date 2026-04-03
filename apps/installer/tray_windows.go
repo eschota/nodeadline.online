@@ -23,12 +23,18 @@ func runWindowsTray(_ io.Writer, _ chan struct{}, triggerShutdown func(), instal
 		})
 
 		mOpen := systray.AddMenuItem("Открыть кабинет", "Локальный дашборд /site/")
+		mLog := systray.AddMenuItem("Посмотреть лог", "installer.log в Notepad")
 		mRestart := systray.AddMenuItem("Полная перезагрузка", "Перезапустить ноду и процесс")
 		mQuit := systray.AddMenuItem("Выход", "Остановить ноду и выйти")
 
 		go func() {
 			for range mOpen.ClickedCh {
 				openLocalURL(cabinetDashboardURL())
+			}
+		}()
+		go func() {
+			for range mLog.ClickedCh {
+				openInstallerLog()
 			}
 		}()
 		go func() {

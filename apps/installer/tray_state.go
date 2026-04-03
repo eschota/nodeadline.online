@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
 	"sync"
 	"sync/atomic"
 )
@@ -35,6 +37,19 @@ func cabinetDashboardURL() string {
 		return "http://127.0.0.1:37651/site/"
 	}
 	return fmt.Sprintf("http://127.0.0.1:%d/site/", port)
+}
+
+// installerLogPath is runtime/installer.log (same file the installer writes to).
+func installerLogPath() string {
+	rd := getTrayRuntimeDir()
+	if rd != "" {
+		return filepath.Join(rd, "installer.log")
+	}
+	l := os.Getenv("LOCALAPPDATA")
+	if l == "" {
+		return ""
+	}
+	return filepath.Join(l, "nodeadline-v2", "runtime", "installer.log")
 }
 
 func markTrayRestart() {
