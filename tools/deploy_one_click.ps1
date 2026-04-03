@@ -47,6 +47,34 @@ if (-not (Test-Path -LiteralPath $envFile)) {
 
 Read-DeployEnv $envFile
 
+function Expand-DeployPath {
+    param([string]$P)
+    if ([string]::IsNullOrWhiteSpace($P)) { return "" }
+    $x = $P.Trim()
+    if ($x -match "(?i)^%USERPROFILE%") {
+        $x = $x -replace "(?i)^%USERPROFILE%", $env:USERPROFILE
+    }
+    if ($x.StartsWith("~") -or $x.StartsWith("~/") -or $x.StartsWith("~\")) {
+        $rest = $x.Substring(1).TrimStart("/", "\")
+        $x = Join-Path $env:USERPROFILE $rest
+    }
+    return $x
+}
+
+function Resolve-SshIdentityPath {
+    $raw = $env:DEPLOY_SSH_IDENTITY
+    if ([string]::IsNullOrWhiteSpace($raw)) {
+        $def = Join-Path $env:USERPROFILE ".ssh\id_ed25519"
+        if (Test-Path -LiteralPath $def) { return (Resolve-Path -LiteralPath $def).Path }
+        return $null
+    }
+    $p = Expand-DeployPath $raw
+    if (-not (Test-Path -LiteralPath $p)) {
+        throw "DEPLOY_SSH_IDENTITY not found: $p"
+    }
+    return (Resolve-Path -LiteralPath $p).Path
+}
+
 $ssh = $env:DEPLOY_SSH
 if (-not $ssh) { throw "deploy.env: set DEPLOY_SSH (user@host)" }
 $remoteDir = $env:DEPLOY_REMOTE_DIR
@@ -60,8 +88,11 @@ if ($env:DEPLOY_GIT_PUSH -eq "0") { $doPush = $false }
 $shipExtra = ""
 if ($BumpVersion) { $shipExtra = "--bump-version" }
 
+$identityPath = Resolve-SshIdentityPath
+
 Write-Host "==> repo: $RepoRoot"
 Write-Host "==> SSH: $ssh"
+if ($identityPath) { Write-Host "==> SSH identity: $identityPath" }
 Write-Host "==> remote: $remoteDir (branch $branch) -> NODEADLINE_LOCAL_DEST=$localDest"
 if ($shipExtra) { Write-Host "==> ship: $shipExtra" }
 
@@ -92,7 +123,13 @@ $remoteScript = $remoteScript.Replace("__REMOTE_DIR__", $remoteDir).Replace("__B
 
 Write-Host ""
 Write-Host "==> SSH: git pull + ship.sh + restart_master.sh"
-$remoteScript | & ssh $ssh bash -s
+$sshArgs = @()
+if ($identityPath) {
+    $sshArgs += "-i", $identityPath
+    $sshArgs += "-o", "IdentitiesOnly=yes"
+}
+$sshArgs += $ssh, "bash", "-s"
+$remoteScript | & ssh @sshArgs
 if ($LASTEXITCODE -ne 0) {
     Write-Host ""
     Write-Host "SSH failed. Check key, host, paths on server." -ForegroundColor Red
