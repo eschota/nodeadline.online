@@ -48,7 +48,16 @@ After a successful node start, the installer creates a **Start Menu** shortcut: 
 
 ## Deploy
 
-See `deploy/deploy-nodeadline.sh` and `deploy/nginx-nodeadline.online.conf`.
+### Одна кнопка с Windows (`deploy.bat`)
+
+1. Скопируйте [`deploy.env.example`](deploy.env.example) → **`deploy.env`** (файл в `.gitignore`), укажите `DEPLOY_SSH`, `DEPLOY_REMOTE_DIR`, `NODEADLINE_LOCAL_DEST`.
+2. Нужен **SSH-ключ** к VPS и закоммиченные изменения в git (перед выкладкой выполняется `git push`).
+3. Запуск из корня репозитория: **`deploy.bat`** — на сервере: `git pull` → [`tools/ship.sh`](tools/ship.sh) (payload + `/site/` + rsync в nginx) → [`tools/restart_master.sh`](tools/restart_master.sh).
+4. С поднятием patch-версии в `version.json`: **`deploy.bat --bump-version`**.
+
+Без `deploy.env` скрипт подскажет создать его из примера.
+
+Серверный пайплайн вручную: `deploy/deploy-nodeadline.sh`, `deploy/nginx-nodeadline.online.conf`.
 
 Production: `export NODEADLINE_CONFIG=/root/nodeadline.json` (or copy secrets into `master.json` beside the repo).
 

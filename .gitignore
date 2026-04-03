@@ -1,6 +1,7 @@
 nodeadline.json
 master.json
 .env
+deploy.env
 .nodeadline_session_secret
 client_secret*.json
 *.pem

@@ -99,6 +99,8 @@ flowchart TB
 
 Единый источник операционных сценариев: [**deploy/DEPLOY.md**](../deploy/DEPLOY.md) и кратко [README.md](../README.md) (ship, release, push `public/`).
 
+**С Windows одной кнопкой:** в корне репозитория [`deploy.bat`](../deploy.bat) и файл `deploy.env` (шаблон — [`deploy.env.example`](../deploy.env.example)): `git push` → SSH на VPS → `git pull` → [`tools/ship.sh`](../tools/ship.sh) → [`tools/restart_master.sh`](../tools/restart_master.sh). Подробности в README.
+
 ---
 
 ## 7. Что планируется дальше
