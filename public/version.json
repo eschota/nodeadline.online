@@ -1,0 +1,11 @@
+{
+  "version": "2.0.9",
+  "url": "https://nodeadline.online/downloads/builds/0017/nodeadline-installer-windows-amd64-v2.0.9.exe",
+  "linux_url": "https://nodeadline.online/downloads/builds/0017/nodeadline-installer-linux-amd64-v2.0.9",
+  "darwin_url": "https://nodeadline.online/downloads/builds/0017/nodeadline-installer-darwin-arm64-v2.0.9",
+  "manifest_url": "https://nodeadline.online/downloads/core-manifest.json",
+  "requirements_mirror": "https://nodeadline.online/Nodeadline/Core/requirements/",
+  "installer_build": "0017",
+  "deploy_seq": 18,
+  "deployed_at_utc": "2026-03-30T19:43:56Z"
+}

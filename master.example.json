@@ -1,0 +1,28 @@
+{
+  "role": "master",
+  "oauth": {
+    "google": {
+      "client_id": "YOUR_CLIENT_ID.apps.googleusercontent.com",
+      "client_secret": "YOUR_CLIENT_SECRET"
+    },
+    "session_secret": "GENERATE_RANDOM_32_BYTES_HEX",
+    "callback_base": "https://nodeadline.online",
+    "cookie_domain": ".nodeadline.online"
+  },
+  "tracker": {
+    "enabled": true,
+    "announce_url": "https://nodeadline.online/bt/announce"
+  },
+  "namecheap": {
+    "api_user": "YOUR_NAMECHEAP_USER",
+    "username": "YOUR_NAMECHEAP_USER",
+    "api_key": "YOUR_API_KEY",
+    "client_ip": "YOUR_VPS_IPV4",
+    "sandbox": false,
+    "apex_domain": "nodeadline.online",
+    "server_ipv4": "YOUR_VPS_IPV4"
+  },
+  "tcp_probe": {
+    "enabled": true
+  }
+}

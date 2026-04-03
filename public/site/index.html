@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>nodeadline — нода</title>
+  <link rel="stylesheet" href="style.css?b=0034"/>
+  <link rel="stylesheet" href="dashboard.css?b=0051"/>
+  <script>window.__NDL_T0=performance.now();</script>
+</head>
+<body>
+<div id="toast-host" role="status" aria-live="polite" aria-atomic="true"></div>
+<div class="success-overlay" id="success-overlay" hidden>
+  <div class="success-overlay-inner">
+    <div class="success-overlay-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="72" height="72" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M8 12l2.5 2.5L16 9"/>
+      </svg>
+    </div>
+    <p class="success-overlay-msg">Доступно из интернета</p>
+  </div>
+</div>
+
+<div id="perf-overlay" class="perf-overlay" aria-live="polite">
+  <div id="overlay-version" class="perf-overlay-line perf-overlay-line--ver">—</div>
+  <div id="overlay-perf" class="perf-overlay-line perf-overlay-line--metrics">—</div>
+</div>
+
+<header class="app-header" id="app-header">
+  <div class="app-header-inner">
+    <nav class="dock-row" aria-label="Навигация">
+      <div class="dock-tasks-wrap" id="dock-tasks-wrap">
+        <button type="button" class="dock-tile dock-tasks" id="dock-tasks-btn" title="Задачи" aria-label="Задачи сервера" aria-expanded="false">
+          <svg class="dock-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M11 21h-1l1-7H7.5c-.58 0-.57-.32-.38-.66.19-.34.05-.08.07-.12C8.48 10.94 10.42 7.54 13 3h1l-1 7h3.5c.49 0 .56.33.47.51l-.07.15C12.96 17.55 11 21 11 21z"/></svg>
+          <span class="dock-tasks-badge" id="dock-tasks-badge" hidden>0</span>
+        </button>
+        <div id="dock-tasks-tooltip" class="dock-tasks-tooltip" role="tooltip" hidden>
+          <div class="dock-tasks-tooltip-inner" id="dock-tasks-tooltip-body">—</div>
+        </div>
+      </div>
+      <div class="dock-health-wrap" id="dock-health-wrap">
+        <button type="button" class="dock-tile dock-health dock-health--idle" id="dock-health-btn" title="Проверка ноды…" aria-label="Проверка ноды…">
+          <svg class="dock-health-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 9h2V7H4v2zm0 4h2v-2H4v2zm0 4h2v-2H4v2zm4-12h10V5H8v2zm0 6h10v-2H8v2zm0 6h10v-2H8v2z"/></svg>
+        </button>
+        <div id="dock-health-tooltip" class="dock-tasks-tooltip dock-health-tooltip" role="tooltip" hidden>
+          <div class="dock-tasks-tooltip-inner" id="dock-health-tooltip-body">—</div>
+        </div>
+      </div>
+      <a class="dock-tile dock-primary" id="dock-auth-guest" href="/oauth/start" title="Войти">
+        <svg class="dock-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+        <span class="sr-only">Войти</span>
+      </a>
+      <div class="dock-auth-wrap" id="dock-auth-owner-wrap" hidden>
+        <button type="button" class="dock-tile dock-primary dock-tile--avatar" id="dock-menu-trigger" aria-haspopup="menu" aria-expanded="false" aria-label="Меню аккаунта">
+          <img id="dock-avatar" class="dock-avatar" alt="" width="40" height="40" decoding="async" referrerpolicy="no-referrer" hidden/>
+          <svg id="dock-avatar-fallback" class="dock-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+        </button>
+        <div class="dock-dropdown" id="dock-dropdown" role="menu" hidden>
+          <a class="dock-dropdown__link" role="menuitem" href="about.html">О канале /site/</a>
+          <button type="button" class="dock-dropdown__btn" role="menuitem" id="dock-logout-btn">Выйти</button>
+        </div>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<div id="ndl-node-down-alert" class="ndl-node-down-alert" hidden role="alert" aria-live="assertive" aria-atomic="true">
+  <div class="ndl-node-down-alert-inner">
+    <span class="ndl-node-down-alert-glyph" aria-hidden="true">!</span>
+    <div class="ndl-node-down-alert-copy">
+      <strong class="ndl-node-down-alert-title">Локальная нода не отвечает</strong>
+      <p class="ndl-node-down-alert-desc">Связь с процессом на этом компьютере потеряна. Запустите ноду, проверьте службу или порт.</p>
+    </div>
+    <button type="button" class="btn btn-sm ndl-node-down-alert-dismiss" id="ndl-node-down-alert-dismiss">Скрыть</button>
+  </div>
+</div>
+
+<div id="dock-tasks-panel-overlay" class="dock-tasks-panel-overlay" hidden aria-hidden="true">
+  <div class="dock-tasks-panel" role="dialog" aria-modal="true" aria-labelledby="dock-tasks-panel-title" tabindex="0">
+    <div class="dock-tasks-panel-head">
+      <div class="dock-tasks-panel-head-top">
+        <div class="dock-tasks-panel-head-text">
+          <h2 id="dock-tasks-panel-title" class="dock-tasks-panel-title">Задачи</h2>
+          <p class="dock-tasks-panel-sub meta" id="dock-tasks-panel-sub">Очередь и последние успешные с превью постеров</p>
+        </div>
+        <div class="dock-tasks-panel-actions">
+          <button type="button" class="btn btn-sm" id="dock-tasks-panel-reindex" title="Поставить в очередь полный перескан всех шаров">Переиндексировать всё</button>
+          <button type="button" class="btn btn-sm" id="dock-tasks-panel-refresh">Обновить</button>
+          <button type="button" class="btn btn-sm" id="dock-tasks-panel-close">Закрыть</button>
+        </div>
+      </div>
+      <div id="dock-tasks-panel-stats" class="dock-tasks-panel-stats" hidden>
+        <div class="dock-tasks-panel-stats-nums" id="dock-tasks-panel-stats-nums"></div>
+        <div class="dock-tasks-panel-stats-bars" id="dock-tasks-panel-stats-bars" aria-hidden="true"></div>
+      </div>
+    </div>
+    <div id="dock-tasks-panel-body" class="dock-tasks-panel-body"><p class="meta">—</p></div>
+  </div>
+</div>
+
+<div class="wrap" id="top">
+  <header class="dash-head">
+    <h1>nodeadline</h1>
+    <p class="subtitle">Локальная нода</p>
+    <p id="sub" class="sub" hidden>нода</p>
+  </header>
+
+  <div class="tile-grid" id="tile-grid" role="tablist" aria-label="Разделы">
+    <button type="button" class="tile" data-panel="net" aria-expanded="false">
+      <svg class="tile-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.85 4.15 7.15 4.15 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg>
+      <span class="tile-title">Сеть</span>
+      <span class="tile-hint">Порт, WAN, UPnP, проверка</span>
+    </button>
+    <button type="button" class="tile" data-panel="traffic" aria-expanded="false">
+      <svg class="tile-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6.99 11L3 15l3.99 4v-3H14v-2H6.99v-3zM21 9l-3.99-4v3H10v2h7.01v3L21 9z"/></svg>
+      <span class="tile-title">Трафик</span>
+      <span class="tile-hint">BitTorrent, /site/, announce</span>
+    </button>
+    <button type="button" class="tile" data-panel="install" aria-expanded="false">
+      <svg class="tile-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+      <span class="tile-title">Установщик</span>
+      <span class="tile-hint">Скачать .exe / бинарники</span>
+    </button>
+    <button type="button" class="tile tile-folders" data-panel="folders" aria-expanded="false">
+      <span class="tile-icon-wrap ndl-tip" data-tip="Локальные папки и индекс файлов" tabindex="0">
+        <svg class="tile-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>
+        <span class="tile-icon-badge" aria-hidden="true">+</span>
+      </span>
+      <span class="tile-title">Папки</span>
+      <span class="tile-hint">Шары, индекс, файлы</span>
+    </button>
+    <button type="button" class="tile" data-panel="storage" aria-expanded="false">
+      <svg class="tile-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 6h16v2H4V6zm0 5h16v2H4v-2zm0 5h10v2H4v-2z"/></svg>
+      <span class="tile-title">Хранилище</span>
+      <span class="tile-hint">Тома, RAM, своп, график</span>
+    </button>
+    <button type="button" class="tile" data-panel="domain" aria-expanded="false">
+      <svg class="tile-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+      <span class="tile-title">Домен</span>
+      <span class="tile-hint">Публичное имя, HTTPS</span>
+    </button>
+    <button type="button" class="tile" data-panel="users" aria-expanded="false">
+      <svg class="tile-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+      <span class="tile-title">Пользователи</span>
+      <span class="tile-hint">Каталог с мастера</span>
+    </button>
+    <button type="button" class="tile" data-panel="system" aria-expanded="false">
+      <svg class="tile-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M19.14 12.94c.04-.31.06-.63.06-.94 0-.31-.02-.63-.06-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.04.31-.07.63-.07.94s.02.63.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+      <span class="tile-title">Система</span>
+      <span class="tile-hint">Обновление, перезапуск</span>
+    </button>
+    <button type="button" class="tile tile-wide" id="tile-data" data-panel="data" aria-expanded="false" hidden>
+      <svg class="tile-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>
+      <span class="tile-title">Данные</span>
+      <span class="tile-hint">Аккаунт и диагностика</span>
+    </button>
+  </div>
+
+  <section id="panel-net" class="expand-panel" hidden>
+    <p class="panel-label">СЕТЬ</p>
+    <div id="ext-banner" class="ext-banner" hidden>Управление с этого ПК: <a href="#">localhost</a></div>
+    <div class="net-card-inner">
+      <div class="port-local-head">
+        <span class="port-word-sm">PORT</span>
+        <span id="net-port-pill" class="net-port-pill idle">—</span>
+      </div>
+      <div id="net"></div>
+      <div class="net-actions net-actions--tools" id="net-actions-row">
+        <button type="button" id="btn-recheck" class="link" onclick="recheckNet()">Проверить доступность снаружи</button>
+        <button type="button" id="btn-upnp-remap" class="btn" onclick="upnpRemap()">Другой внешний порт (UPnP)</button>
+      </div>
+      <p class="meta" style="margin:.5rem 0 0;font-size:.7rem;line-height:1.45;color:var(--muted)">Если UPnP «успешен», но снаружи порт закрыт — роутер мог выдать занятый или «серый» NAT. Кнопка выше снимает старый проброс и подбирает новый внешний порт с проверкой с сервера.</p>
+      <details class="net-man" id="net-man" open>
+        <summary>Публичный адрес · WAN и порт</summary>
+        <div class="net-man-body net-man-panel">
+          <p class="meta" style="margin:0;width:100%;font-size:.72rem;color:var(--muted)">Если проброс на роутере другой — укажи WAN и внешний порт.</p>
+          <input class="input" id="wanip" type="text" inputmode="decimal" autocomplete="off" placeholder="WAN IP"/>
+          <input class="input" id="pubp" type="number" min="1" max="65535" placeholder="Порт снаружи"/>
+          <button class="btn btn-primary" id="btn-manual-save" type="button" onclick="manualPort()">Сохранить и проверить</button>
+        </div>
+      </details>
+      <div id="port-remote-msg" hidden></div>
+    </div>
+  </section>
+
+  <section id="panel-traffic" class="expand-panel" hidden>
+    <p class="panel-label">ТРАФИК И КАНАЛЫ</p>
+    <div class="stat-shell">
+      <div id="dash-stats" class="status">…</div>
+    </div>
+    <p style="font-size:.72rem;color:var(--muted);margin:.75rem 0 0">Скачано — объём с мастера по <code>/site/</code>. Раздача между пирами в этой сборке для шаров — через announce.</p>
+    <div class="owner-card" style="margin-top:1rem">
+      <h2>Синхронизация (торрент)</h2>
+      <div id="tor" class="status" style="font-size:.82rem">…</div>
+    </div>
+    <div class="owner-card" style="margin-top:1rem">
+      <h2>Медиа</h2>
+      <div id="med" class="status" style="font-size:.82rem">…</div>
+    </div>
+  </section>
+
+  <section id="panel-install" class="expand-panel" hidden>
+    <p class="panel-label">УСТАНОВЩИК</p>
+    <a id="dl-win" class="btn-main" href="https://nodeadline.online/downloads/nodeadline-installer-windows-amd64.exe">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+      <span>Скачать установщик Windows</span>
+    </a>
+    <div class="dl-row">
+      <span id="edge-badge" class="edge-badge mute">сервер…</span>
+    </div>
+    <p style="font-size:.72rem;color:var(--muted);margin-top:.75rem">Актуальная сборка с nodeadline.online — см. бейдж.</p>
+  </section>
+
+  <section id="panel-folders" class="expand-panel" hidden>
+    <p class="panel-label">ПАПКИ</p>
+    <p id="folders-intro" class="meta" style="margin:0 0 .85rem;line-height:1.45">Добавь папку с этого ПК и работай с файлами без входа. Вход через Google нужен для синхронизации с трекером (снимок торрента), расширенных настроек и привязки шаров к аккаунту.</p>
+    <div class="folders-cta" id="folders-cta-row">
+      <button type="button" class="btn btn-primary btn-lg" id="btn-add-folder-pick" onclick="addFolderPrimary()">Добавить папку</button>
+    </div>
+    <p id="folders-https-hint" class="meta" style="margin:.5rem 0 0;font-size:.78rem;line-height:1.45;display:none" hidden></p>
+    <details class="folders-manual" id="folders-manual">
+      <summary>Указать путь вручную</summary>
+      <div class="row" id="folder-add-row" style="margin-top:.65rem;flex-wrap:wrap;gap:.35rem">
+        <input class="input" id="lp" placeholder="Полный путь к папке" style="flex:1;min-width:10rem"/>
+        <input class="input" id="mp" placeholder="Имя в URL"/>
+        <label class="meta" style="display:flex;align-items:center;gap:.35rem">Видимость
+          <select id="share-vis" class="input" style="width:auto;min-width:6rem">
+            <option value="public">public</option>
+            <option value="private">private</option>
+          </select>
+        </label>
+        <button class="btn" type="button" id="btn-pick-folder-inline" onclick="pickFolder()">Выбрать папку…</button>
+        <button class="btn btn-primary" type="button" onclick="addShare()">Добавить</button>
+      </div>
+    </details>
+    <p id="folders-queue-hint" class="meta" style="margin:.35rem 0 0;font-size:.72rem;line-height:1.4" hidden></p>
+    <div id="shares" class="list">…</div>
+    <div class="owner-card" style="margin-top:1rem">
+      <h2>Файлы</h2>
+      <div id="ex" class="status">Выбери шар выше — список файлов появится здесь.</div>
+    </div>
+  </section>
+
+  <section id="panel-domain" class="expand-panel" hidden>
+    <p class="panel-label">ДОМЕН</p>
+    <p class="meta" style="margin:0 0 .75rem;line-height:1.45">После входа через Google мастер создаёт поддомен <code>ваш-логин.nodeadline.online</code>: в DNS A-запись ведёт на сервер ingress (HTTPS), оттуда трафик идёт на ваш WAN и внешний порт ноды. По публичной ссылке гостям доступен тот же интерфейс, что и с localhost, без добавления папок.</p>
+    <div id="domain-panel-body" class="domain-panel-body status">…</div>
+  </section>
+
+  <section id="panel-users" class="expand-panel" hidden>
+    <p class="panel-label">ПОЛЬЗОВАТЕЛИ</p>
+    <p class="meta" style="margin:0 0 .75rem;line-height:1.45">Список с мастера (nodeadline.online): логин, контакты и публичная нода по HTTPS.</p>
+    <div id="users-directory-body" class="users-directory status">…</div>
+  </section>
+
+  <section id="panel-storage" class="expand-panel" hidden>
+    <p class="panel-label">ХРАНИЛИЩЕ</p>
+    <div class="storage-kpi-row" role="group" aria-label="Сводка">
+      <button type="button" class="storage-kpi-tile is-active" id="storage-kpi-btn-disks" data-storage-tab="disks" aria-pressed="true">
+        <div class="storage-kpi-ring-wrap" aria-hidden="true">
+          <svg class="storage-kpi-svg" viewBox="0 0 72 72" width="72" height="72">
+            <circle class="storage-kpi-track" cx="36" cy="36" r="30" fill="none" stroke-width="5"/>
+            <circle id="storage-kpi-disk-ring" class="storage-kpi-arc" cx="36" cy="36" r="30" fill="none" stroke-width="5"
+              stroke-linecap="round" transform="rotate(-90 36 36)" stroke-dasharray="188.5" stroke-dashoffset="188.5"/>
+          </svg>
+          <span class="storage-kpi-icon">
+            <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M4 6h16v2H4V6zm0 5h16v2H4v-2zm0 5h10v2H4v-2z"/></svg>
+          </span>
+        </div>
+        <span class="storage-kpi-pct" id="storage-kpi-disk-pct">—</span>
+        <span class="storage-kpi-name">Диски</span>
+      </button>
+      <button type="button" class="storage-kpi-tile" id="storage-kpi-btn-memory" data-storage-tab="memory" aria-pressed="false">
+        <div class="storage-kpi-ring-wrap" aria-hidden="true">
+          <svg class="storage-kpi-svg" viewBox="0 0 72 72" width="72" height="72">
+            <circle class="storage-kpi-track" cx="36" cy="36" r="30" fill="none" stroke-width="5"/>
+            <circle id="storage-kpi-ram-ring" class="storage-kpi-arc" cx="36" cy="36" r="30" fill="none" stroke-width="5"
+              stroke-linecap="round" transform="rotate(-90 36 36)" stroke-dasharray="188.5" stroke-dashoffset="188.5"/>
+          </svg>
+          <span class="storage-kpi-icon">
+            <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M17 1H7c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-2-2-2zm0 18H7V5h10v14zM8 6h8v2H8V6zm0 4h8v2H8v-2zm0 4h5v2H8v-2z"/></svg>
+          </span>
+        </div>
+        <span class="storage-kpi-pct" id="storage-kpi-ram-pct">—</span>
+        <span class="storage-kpi-name">Память</span>
+      </button>
+      <button type="button" class="storage-kpi-tile" id="storage-kpi-btn-cpu" data-storage-tab="cpu" aria-pressed="false">
+        <div class="storage-kpi-ring-wrap" aria-hidden="true">
+          <svg class="storage-kpi-svg" viewBox="0 0 72 72" width="72" height="72">
+            <circle class="storage-kpi-track" cx="36" cy="36" r="30" fill="none" stroke-width="5"/>
+            <circle id="storage-kpi-cpu-ring" class="storage-kpi-arc" cx="36" cy="36" r="30" fill="none" stroke-width="5"
+              stroke-linecap="round" transform="rotate(-90 36 36)" stroke-dasharray="188.5" stroke-dashoffset="188.5"/>
+          </svg>
+          <span class="storage-kpi-icon">
+            <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M15 9H9v6h6V9zm-2 4h-2v-2h2v2zm8-2V9h-2V7c0-1.1-.9-2-2-2h-2V3h-2v2h-2V3H9v2H7c-1.1 0-2 .9-2 2v2H3v2h2v2H3v2h2v2c0 1.1.9 2 2 2h2v2h2v-2h2v2h2v-2h2c1.1 0 2-.9 2-2v-2h2v-2h-2v-2h2zm-4 6H7V7h10v10z"/></svg>
+          </span>
+        </div>
+        <span class="storage-kpi-pct" id="storage-kpi-cpu-pct">—</span>
+        <span class="storage-kpi-name">CPU</span>
+      </button>
+    </div>
+    <div class="storage-subnav" role="tablist" aria-label="Разделы хранилища">
+      <button type="button" class="storage-subnav-btn is-active" role="tab" data-storage-tab="disks" aria-selected="true" id="storage-tabhead-disks">Диски</button>
+      <button type="button" class="storage-subnav-btn" role="tab" data-storage-tab="memory" aria-selected="false" id="storage-tabhead-memory">Память</button>
+      <button type="button" class="storage-subnav-btn" role="tab" data-storage-tab="cpu" aria-selected="false" id="storage-tabhead-cpu">Процессор</button>
+    </div>
+    <div id="storage-tab-disks" class="storage-tab-panel" role="tabpanel" aria-labelledby="storage-tabhead-disks">
+      <p id="storage-hint" class="storage-hint meta"></p>
+      <div id="storage-volumes-list" class="storage-vol-grid"></div>
+    <div class="disk-bench" id="disk-bench-wrap" hidden>
+      <h3 class="disk-bench-title">Скорость чтения/записи</h3>
+      <p class="meta" style="margin:0 0 .5rem;line-height:1.45">Короткий тест во временный файл на выбранном томе (Windows/Linux, нагрузка на диск).</p>
+      <div class="disk-bench-row">
+        <label class="disk-bench-label" for="disk-bench-mount">Том</label>
+        <select class="input disk-bench-select" id="disk-bench-mount"></select>
+        <button type="button" class="btn btn-primary" id="disk-bench-btn">Измерить</button>
+      </div>
+      <div id="disk-bench-result" class="disk-bench-result"></div>
+    </div>
+    </div>
+    <div id="storage-tab-memory" class="storage-tab-panel" role="tabpanel" aria-labelledby="storage-tabhead-memory" hidden>
+      <div id="storage-memory-compact" class="storage-compact-lines"></div>
+      <p id="storage-swap-note" class="meta storage-swap-note" hidden></p>
+      <div id="storage-chart-wrap" class="storage-chart-wrap">
+        <canvas id="storage-mem-chart" width="640" height="200" aria-label="RAM и swap, %"></canvas>
+        <div class="storage-chart-legend"><span class="storage-legend-ram">RAM</span><span class="storage-legend-swap">Swap</span></div>
+      </div>
+    </div>
+    <div id="storage-tab-cpu" class="storage-tab-panel" role="tabpanel" aria-labelledby="storage-tabhead-cpu" hidden>
+      <div id="storage-cpu-compact" class="storage-compact-lines"></div>
+      <div class="storage-chart-wrap storage-chart-wrap--cpu">
+        <canvas id="storage-cpu-chart" width="640" height="200" aria-label="Загрузка CPU, %"></canvas>
+        <div class="storage-chart-legend"><span class="storage-legend-cpu">CPU</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="panel-system" class="expand-panel" hidden>
+    <p class="panel-label">СИСТЕМА</p>
+    <p class="meta" style="margin:0 0 .85rem;line-height:1.45">Принудительная проверка канала <code>/site/</code> на мастере (скачивание при наличии новой ревизии), завершение других процессов этой установки ноды и перезапуск локального веб-сервера для чистого состояния и согласованности версий.</p>
+    <div class="system-actions">
+      <button type="button" class="btn btn-primary btn-lg" id="system-apply-btn" aria-describedby="system-apply-hint">Проверить обновления и перезапустить ноду</button>
+    </div>
+    <p id="system-apply-hint" class="meta" style="margin:.75rem 0 0;line-height:1.45">Доступ: localhost, LAN или после входа. Ниже появится результат по шагам (синхронизация, процессы, перезапуск). При успехе страница обновится сама.</p>
+    <div id="system-apply-result" class="system-apply-result" role="status" aria-live="polite" hidden></div>
+  </section>
+
+  <section id="panel-data" class="expand-panel" hidden>
+    <div id="owner-panel" hidden>
+      <div class="owner-card">
+        <h2>Кратко</h2>
+        <ol class="status" style="margin:0;padding-left:1.15rem;line-height:1.55;font-size:.84rem">
+          <li><b>Сеть</b> — зелёный = порт доступен снаружи.</li>
+          <li><b>Папки</b> — путь на диске и имя в URL.</li>
+          <li><b>Синк</b> — «Снимок» публикует infohash на трекер.</li>
+        </ol>
+      </div>
+      <div class="owner-card">
+        <h2>Аккаунт</h2>
+        <p class="status"><b id="owner-name"></b></p>
+      </div>
+      <div class="owner-card">
+        <h2>Диагностика</h2>
+        <button class="btn" onclick="copyDiag()">Копировать JSON</button>
+        <pre id="diag" class="status" style="margin-top:.65rem;white-space:pre-wrap;font-size:.7rem"></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="pubs-strip">
+    <h2>Публичные папки</h2>
+    <p style="font-size:.72rem;color:var(--muted);margin:0 0 .5rem;line-height:1.45">Все папки на этой ноде, открытые по ссылке <code>/p/…</code> — можно открыть и без входа.</p>
+    <div id="pubs" class="list">…</div>
+  </div>
+
+  <section class="marketplace-strip" id="marketplace-strip" hidden>
+    <button type="button" class="marketplace-plaque" id="marketplace-toggle" aria-expanded="false" aria-controls="marketplace-expanded">
+      <div class="marketplace-plaque-text">
+        <span class="panel-label marketplace-plaque-kicker">MARKETPLACE</span>
+        <span class="marketplace-plaque-title">Галерея индекса</span>
+        <span class="meta marketplace-plaque-hint">Медиа из индекса · открыть по клику</span>
+      </div>
+      <span class="marketplace-plaque-chevron" aria-hidden="true">▼</span>
+    </button>
+    <div id="marketplace-expanded" class="marketplace-expanded" hidden>
+      <div class="marketplace-head">
+        <p class="meta marketplace-meta" id="marketplace-address">—</p>
+        <p class="meta marketplace-stats" id="marketplace-stats">—</p>
+      </div>
+      <div id="marketplace-grid" class="marketplace-grid" role="list"></div>
+      <div class="marketplace-pager" id="marketplace-pager"></div>
+    </div>
+  </section>
+
+  <p class="footer-link"><a href="about.html">О канале /site/</a></p>
+</div>
+<script src="dashboard.js?b=0061"></script>
+</body>
+</html>

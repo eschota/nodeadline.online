@@ -1,0 +1,23 @@
+# Пример systemd для ноды на том же сервере, что и nginx (опционально).
+# Скопировать в /etc/systemd/system/nodeadline-node.service, поправить пути и пользователя.
+#
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now nodeadline-node
+
+[Unit]
+Description=Nodeadline local node (waitress)
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/var/www/nodeadline
+Environment=NODEADLINE_CONFIG=/root/nodeadline.json
+Environment=NODEADLINE_RUNTIME_DIR=/var/lib/nodeadline-node
+Environment=PORT=37651
+ExecStart=/var/www/nodeadline/.venv/bin/python3 /var/www/nodeadline/node_main.py
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

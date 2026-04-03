@@ -1,0 +1,20 @@
+[Unit]
+Description=nodeadline master (лендинг, OAuth, site_channel static upstream)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/nodeadline.online
+Environment=NODEADLINE_CONFIG=/root/master.json
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/usr/bin/python3 apps/master/main.py
+Restart=on-failure
+RestartSec=4
+KillMode=mixed
+TimeoutStopSec=20
+# Один инстанс: при ручном nohup без systemd см. tools/restart_master.sh (flock + kill + один старт)
+
+[Install]
+WantedBy=multi-user.target

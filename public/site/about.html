@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Карта сайта — nodeadline</title>
+  <link rel="stylesheet" href="style.css?b=0029"/>
+  <link rel="stylesheet" href="dashboard.css?b=0039"/>
+  <script>window.__NDL_T0=performance.now();</script>
+</head>
+<body>
+<div id="toast-host" role="status" aria-live="polite" aria-atomic="true"></div>
+<div id="perf-overlay" class="perf-overlay" aria-live="polite">
+  <div id="overlay-version" class="perf-overlay-line perf-overlay-line--ver">—</div>
+  <div id="overlay-perf" class="perf-overlay-line perf-overlay-line--metrics">—</div>
+</div>
+
+<header class="app-header" id="app-header">
+  <div class="app-header-inner">
+    <nav class="dock-row" aria-label="Навигация">
+      <div class="dock-health-wrap" id="dock-health-wrap">
+        <button type="button" class="dock-tile dock-health dock-health--idle" id="dock-health-btn" title="Проверка ноды…" aria-label="Проверка ноды…">
+          <svg class="dock-health-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 9h2V7H4v2zm0 4h2v-2H4v2zm0 4h2v-2H4v2zm4-12h10V5H8v2zm0 6h10v-2H8v2zm0 6h10v-2H8v2z"/></svg>
+        </button>
+        <div id="dock-health-tooltip" class="dock-tasks-tooltip dock-health-tooltip" role="tooltip" hidden>
+          <div class="dock-tasks-tooltip-inner" id="dock-health-tooltip-body">—</div>
+        </div>
+      </div>
+      <a class="dock-tile dock-primary" id="dock-auth-guest" href="/oauth/start" title="Войти">
+        <svg class="dock-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+        <span class="sr-only">Войти</span>
+      </a>
+      <div class="dock-auth-wrap" id="dock-auth-owner-wrap" hidden>
+        <button type="button" class="dock-tile dock-primary dock-tile--avatar" id="dock-menu-trigger" aria-haspopup="menu" aria-expanded="false" aria-label="Меню аккаунта">
+          <img id="dock-avatar" class="dock-avatar" alt="" width="40" height="40" decoding="async" referrerpolicy="no-referrer" hidden/>
+          <svg id="dock-avatar-fallback" class="dock-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+        </button>
+        <div class="dock-dropdown" id="dock-dropdown" role="menu" hidden>
+          <a class="dock-dropdown__link" role="menuitem" href="about.html" aria-current="page">О канале /site/</a>
+          <button type="button" class="dock-dropdown__btn" role="menuitem" id="dock-logout-btn">Выйти</button>
+        </div>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+  <header class="dash-head">
+    <h1>nodeadline</h1>
+    <p class="subtitle">Канал /site/</p>
+  </header>
+  <div class="owner-card">
+    <p style="font-size:.88rem;line-height:1.6;margin:0">Страницы синхронизируются с мастером по BitTorrent (web seed) и проверяются по SHA256.</p>
+    <ul style="margin:1rem 0 0;padding-left:1.1rem;line-height:1.7;font-size:.86rem">
+      <li><a href="index.html">Главная (дашборд)</a></li>
+      <li><a href="/">Корень ноды</a> — редирект на дашборд</li>
+    </ul>
+  </div>
+  <p class="footer-link"><a href="index.html">← Назад</a></p>
+</div>
+<script src="dashboard.js?b=0041"></script>
+</body>
+</html>

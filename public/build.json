@@ -1,0 +1,9 @@
+{
+  "version": "2.0.9",
+  "installer_build": "0016",
+  "deploy_seq": 18,
+  "deployed_at_utc": "2026-03-30T19:43:56Z",
+  "payload_sha256": "b36db94e48dad1361960d06db1d15b2f04c14b4da0942a11285b262964b82b8d",
+  "payload_size": 86411,
+  "built_at_utc": "2026-03-30T19:43:56Z"
+}

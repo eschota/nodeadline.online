@@ -1,32 +1,19 @@
 {
-  "project": {
-    "name": "nodeadline.online",
-    "description": "Шаблон настроек — скопируйте в nodeadline.json и подставьте токен"
-  },
-  "github": {
-    "token": "GITHUB_PAT_ВСТАВЬТЕ_СЮДА",
-    "apiBase": "https://api.github.com"
-  },
-  "namecheap": {
-    "api_user": "NAMECHEAP_LOGIN",
-    "username": "NAMECHEAP_LOGIN",
-    "api_key": "NAMECHEAP_API_KEY",
-    "client_ip": "ПУБЛИЧНЫЙ_IPV4_СЕРВЕРА_КАК_В_WHITELIST",
-    "sandbox": false,
-    "apex_domain": "nodeadline.online",
-    "server_ipv4": "ПУБЛИЧНЫЙ_IPV4_СЕРВЕРА",
-    "registration_years": 1,
-    "registrant": {
-      "first_name": "",
-      "last_name": "",
-      "address1": "",
-      "city": "",
-      "state_province": "",
-      "postal_code": "",
-      "country": "US",
-      "phone": "+1.5555555555",
-      "email": "you@example.com",
-      "organization": ""
+  "role": "node",
+  "oauth": {
+    "master": {
+      "base_url": "https://nodeadline.online"
     }
+  },
+  "node": {
+    "listen_host": "127.0.0.1",
+    "expose_lan": false,
+    "listen_port": 0,
+    "port_candidates": [28473, 37651, 45123, 7332],
+    "auto_upnp": true,
+    "auto_probe_wan": true
+  },
+  "tracker": {
+    "announce_url": "https://nodeadline.online/bt/announce"
   }
 }

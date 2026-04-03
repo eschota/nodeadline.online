@@ -1,0 +1,4 @@
+waitress>=3.0.0
+cryptography>=42.0.0,<44
+PyJWT>=2.8.0
+pytest>=8.0.0

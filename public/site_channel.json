@@ -1,0 +1,13 @@
+{
+  "revision": 62,
+  "version": "2.0.9",
+  "distribution_tier": "system_master",
+  "sync_origin": "system_master",
+  "bundle_url": "https://nodeadline.online/downloads/site/nodeadline-site-20260403T071959Z.tar.gz",
+  "bundle_sha256": "9685cbcb5eb14ce2ea7b94aa484fc01063c43c86fe9f3ec9ab4bd6f669e9f061",
+  "bundle_bytes": 45710,
+  "torrent_url": "https://nodeadline.online/downloads/site/nodeadline-site-20260403T071959Z.torrent",
+  "magnet": "magnet:?xt=urn:btih:a0b73a23a8108e6446980fca8dbdfa1b2b5d603e&xt=urn:btmh:12209f573b4fca38bb7fb48abad3a42781bab456211b3b8be52c18c000cb93c9ee84&dn=nodeadline-site-20260403T071959Z.tar.gz&tr=https%3a%2f%2fnodeadline.online%2fbt%2fannounce&ws=https%3a%2f%2fnodeadline.online%2fdownloads%2fsite%2fnodeadline-site-20260403T071959Z.tar.gz",
+  "info_hash": "9f573b4fca38bb7fb48abad3a42781bab456211b",
+  "built_at_utc": "20260403T071959Z"
+}

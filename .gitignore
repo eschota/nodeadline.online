@@ -1,8 +1,29 @@
-node_modules/
-.env
-.DS_Store
-__pycache__/
-*.py[cod]
-
-# Секреты проекта (токены); в репозиторий только nodeadline.example.json
 nodeadline.json
+master.json
+.env
+.nodeadline_session_secret
+client_secret*.json
+*.pem
+*.key
+data/
+__pycache__/
+*.pyc
+.venv/
+.venv-certbot/
+venv/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+dist/
+build/
+*.exe
+
+# Wheel mirror and release payloads (rebuilt on server; do not commit)
+public/Nodeadline/Core/requirements/
+public/downloads/builds/
+public/downloads/nodeadline-installer-*
+public/**/*.tar.gz
+public/downloads/site/*.torrent
+# Локальные бинарники ffmpeg (скачать: tools/fetch_vendor_ffmpeg.sh)
+vendor/ffmpeg/linux/ffmpeg
+vendor/ffmpeg/linux/ffprobe
